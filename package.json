@@ -10,6 +10,9 @@
   "author": "Junior Carvalho",
   "license": "GPL",
   "dependencies": {
-    "merge": "^1.2.0"
+    "merge": "^1.2.0",
+	"node-rsa":"0.1.54",
+	"qs":"2.3.3",
+	"request":"2.48.0"
   }
 }
