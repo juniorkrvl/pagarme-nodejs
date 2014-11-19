@@ -7,6 +7,10 @@
     "test": "test",
     "start": "node server.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juniorkrvl/pagarme-nodejs"
+  },
   "author": "Junior Carvalho",
   "license": "GPL",
   "dependencies": {
