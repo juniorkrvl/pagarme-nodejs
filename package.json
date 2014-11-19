@@ -1,0 +1,15 @@
+{
+  "name": "pagarme-nodejs",
+  "version": "1.0.0",
+  "description": "Node API pagar.me",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "node server.js"
+  },
+  "author": "Junior Carvalho",
+  "license": "GPL",
+  "dependencies": {
+    "merge": "^1.2.0"
+  }
+}
