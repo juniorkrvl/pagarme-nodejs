@@ -1,65 +1,45 @@
-var querystring = require('querystring');
+var req = require('request');
 var qs = require('qs');
-var https = require('https');
+var Merge = require('merge');
+var PagarMe = require('../pagarme.js');
 
-var host = 'api.pagar.me';
-var options = {};
-var dataString = '';
-var headers = {};
-
-function Request(endpoint, url, method, data) {
-  
-  //this.dataString = JSON.stringify(data);
-  this.dataString = qs.stringify(data);
-  
-  this.dataString ='api_key=ak_test_degoc5yK7aIZ6We84UenZicTICiSeI';
-	
-  console.log(this.dataString);
-  
-  
-  endpoint += '/' + url;
-  
-  if (method == 'GET') {
-    endpoint += '?' + qs.stringify(data);
-  }
-  else {
-    this.headers = {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=utf8',
-      'Content-Length': Buffer.byteLength(this.dataString)
-    };
-	console.log(this.headers);
-  }
-	
-console.log(endpoint);
-  
-  this.options = {
-    host: host,
-    path: endpoint,
-    method: method,
-    headers: headers
-  };
+function Request(path, method){
+	this.path = path;
+	this.method = method;
+	this.parameters = {};
+	this.headers = {}
 }
 
-Request.prototype.run = function(success){
-  
-  var req = https.request(this.options, function(res) {
-    res.setEncoding('utf-8');
+Request.prototype.encode = function(params){
+		return qs.stringify(params);	
+	};
+	
+Request.prototype.run = function(callback){
+	if(PagarMe.getApiKey()==null){
+		console.log('You need to configure a API key before performing requests.');
+		throw new Error('You need to configure a API key before performing requests.');
+	}
 
-    var responseString = '';
+	this.headers = {};
+	this.parameters = Merge(true,{api_key: PagarMe.getApiKey()}, this.parameters); // this.parameters.merge({api_key:pagarme._api_key});
+	
+	console.log(this.parameters);
+	
+	options = {
+		url: this.path,
+		method: this.method,
+		headers: this.headers,
+		form: this.parameters
+	};
+	
+	req(options,function(error, res, body){
+	 if(!error && res.statusCode == 200)
+		 callback(JSON.stringify(body));
+	 else
+		 callback(JSON.stringify(body));
+	});
 
-    res.on('data', function(data) {
-      responseString += data;
-    });
+};
 
-    res.on('end', function() {
-      //console.log(responseString);
-      var responseObject = JSON.parse(responseString);
-      success(responseObject);
-    });
-  });
-
-  req.write(dataString);
-  req.end();
-}
 
 module.exports = Request;

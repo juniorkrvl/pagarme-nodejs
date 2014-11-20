@@ -1,15 +1,10 @@
-var Request = require('./request2.js');
+var Request = require('./request.js');
 var PagarMe = require('../pagarme.js');
 
 function Model(name,attr){
 	this._name = name;
 	this._attributes = attr;
 }
-
-//var inherit = Object.create(Model.prototype);
-//inherit.constructor = Model;
-//Model.prototype = inherit;
-//Model.constructor = Model;
 
 Model.prototype.urlId = function(){
 	if (!this.hasOwnProperty('id')){
@@ -20,16 +15,53 @@ Model.prototype.urlId = function(){
 };
 
 Model.prototype.url = function(){
-	return '/' + this._name + 's';
+	return PagarMe.getFullPath() + '/' + this._name + 's';
 };
 
 Model.prototype.create = function(callback){
-	console.log(this._attributes);
-	req = new Request(PagarMe.getFullPath() + this.url(),'POST');
+	req = new Request(this.url(),'POST');
 	req.parameters = this._attributes;
 	req.run(function(data){
-		callback(JSON.stringify(data));
+		callback(data);
 	});
+};
+
+Model.prototype.save = function(callback){
+	req = new Request(this.url(),'PUT');
+	req.parameters = this._attributes;
+	req.run(function(data){
+		callback(data);
+	});
+};
+
+Model.prototype.findById = function(id,callback){
+	req = new Request(this.url() + '/' + id,'GET');
+	req.run(function(data){
+		callback(data);
+	});
+};
+
+Model.prototype.findBy = function(hash, callback, page, count){
+	page = page || 1;
+	count = count || 10;
+	
+	req = new Request(this.url(),'GET');
+	req.parameters = Merge(true,hash,{page:page,count:count});
+	req.run(function(data){
+		callback(data);
+	});
+};
+
+Model.prototype.all = function(callback, page, count){
+	page = page || 1;
+	count = count || 10;
+	
+	req = new Request(this.url(),'GET');
+	req.parameters = {page:page, count:count};
+	req.run(function(data){
+		callback(data);
+	});
+	
 };
 
 

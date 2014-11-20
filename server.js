@@ -2,12 +2,13 @@ var request = require('request');
 var http = require('http');
 var querystring = require('querystring');
 var qs = require('qs');
+
 var PagarMe = require('./libs/pagarme.js');
-var Provider = require('./libs/pagarme/provider.js');
+
 
 var Model = require('./libs/pagarme/model.js');
 
-PagarMe.setApiKeys('ak_test_degoc5yK7aIZ6We84UenZicTICiSeI','ek_test_y2xsJCewfhfc9WBTB79HnCmUWQ86df');
+//PagarMe.setApiKeys('ak_test_degoc5yK7aIZ6We84UenZicTICiSeI','ek_test_y2xsJCewfhfc9WBTB79HnCmUWQ86df');
 
 var transaction = PagarMe.transaction({
 	amount:'550',
@@ -19,10 +20,7 @@ var transaction = PagarMe.transaction({
     }
 });
 
-var trans = PagarMe.transaction({
- amount:'1011',
- card_hash: '100385_LezH8mWeY01tdknuP8hOr3vJR930fJTTYUZ4D/0T4tGB8DdCDOKoafgnxYFm4lZD4HhKISn6aASDyT72kPumNIfo+tzGjTW1BRGRxcKyf90oDTKwsUYZ37n9E1oELU2W8SvvCDzgSr2kFkTDqY3hxNJDPQVDTkvdM0wIwinxYzIiqDOgBm+R5c1eHhaC6JwXichLD7oc78lbUNGj/4uooSRcU+Sw84BeG0KD1PDNlrO2T+pSczdqJhXJM9hqlze3R6Abu5+VV2WUhulzYYGsgHYHChj1cTA+bTGPEP98BaA80axM83J0dNvBi6mPz7QqM1tottF1pYFShYM85Qkgog=='
-});
+var card = PagarMe.card();
 
 //transaction.charge(function(data){
 // console.log(data);
@@ -38,9 +36,19 @@ http.createServer(function (req, res) {
   
   res.writeHead(200, {'Content-Type': 'application/json'});
  
-  trans.charge(function(data){
-   res.end(JSON.parse(data));
-  });
+ card.findById('card_ci2nctt610006gy16cwx11spr',function(data){
+  res.end(JSON.parse(data));
+ });
+ 
+//  transaction.charge(function(data){
+//   res.end(JSON.parse(data));
+//  });
+ 
+// transaction.all(function(data){
+//   res.end(JSON.parse(data)); 
+// },1,1);
+ 
+ 
  
 	
 //  m.create(function(data){

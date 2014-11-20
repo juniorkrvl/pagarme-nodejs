@@ -1,74 +1,105 @@
+var Model = require('./model.js');
+var Merge = require('merge');
+var NodeRSA = require('node-rsa');
 var Request = require('./request.js');
 var PagarMe = require('../pagarme.js');
-var NodeRSA = require('node-rsa');
 
-var payment_method = 'credit_card';
-var installments = 1;
-var status = 'local';
-
-function Transaction(setup, pagarme){
-	this.prototype = pagarme;
-	this._setup = setup;
-	this._setup.api_key = this.prototype._api_key;
-	this._setup.card_hash = '';
+function Transaction(setup){
+  this.payment_method = setup.payment_method == undefined? 'credit_card':setup.payment_method;
+  this.installments = setup.installments == undefined? 1 :setup.installments;
+  this.status = setup.status == undefined? 'local':setup.status;
+  
+  Model.call(this,'transaction',setup);
 }
 
-Transaction.prototype.validateSetup = function(setup){
-	if (setup.hasOwnProperty('payment_method')){
-		if(setup.payment_method == 'credit_card' && setup.card_hash == '')
-			console.log('Card hash is required');
-		if(setup.payment_method == 'credit_card' && !setup.hasOwnProperty('credit_card'))
-			console.log('Credit card is required.')
-	}
-	if (setup.hasOwnProperty('amount')){
-		if (!setup.amount > 0)
-			console.log('Amount must be greater than zero.');
-	}
-	
-	return true;
+//inherit from Model
+var inherit = Object.create(Model.prototype);
+inherit.constructor = Transaction;
+Transaction.prototype = inherit;
+
+Transaction.prototype.checkCardObject = function(){
+  if (this._attributes.hasOwnProperty('card')){
+    if (this._attributes.card.hasOwnProperty('id')){
+      if (this._attributes.card.id > 0)
+        this.card_id = this._attributes.card.id;
+    }
+    else{
+      this._attributes.card_number = this._attributes.card.card_number;
+      this._attributes.card_holder_name = this._attributes.card.card_holder_name;
+      this._attributes.card_expiration_date = this._attributes.card.card_expiration_date;
+      this._attributes.card_cvv = this._attributes.card.card_cvv;
+    }
+    delete this._attributes['card'];
+    console.log(this._attributes);
+  }
 };
 
-Transaction.prototype.generateCardHash = function(card, success){
+Transaction.prototype.clearCardData = function(callback){
+  if (this._attributes.card_hash == undefined){
+    this.getCardHash({card_number:this._attributes.card_number,card_holder_name: this._attributes.card_holder_name, card_expiration_date: this._attributes.card_expiration_date,card_cvv: this._attributes.card_cvv},function(hash){
+      //this._attributes.card_hash = hash;
+      callback(hash);
+    });
+  }
+  else{
+    delete this._attributes['card_number']; 
+    delete this._attributes['card_holder_name'];
+    delete this._attributes['card_expiration_date'];
+    delete this._attributes['card_cvv'];
+    callback(this._attributes.card_hash);
+  }
+  
+  //this.card_id !== undefined ||
+  
+};
 
-	var reqs = new Request(this.prototype._api_endpoint, 'transactions/card_hash_key', 'GET', 
-						   {
-							api_key:this.prototype._api_key, 
-							encryption_key: this.prototype._encryption_key
-						   });
-    
-	reqs.run(function(data){
+Transaction.prototype.getCardHash = function(card, callback){
+    req = new Request(PagarMe.getFullPath() + this.url() + '/card_hash_key','GET');
+    req.run(function(data){
+      data = JSON.parse(data);
       var key = new NodeRSA(data['public_key']);
       var encryptedString = data.id + '_' + key.encrypt(card,'base64','utf8');
-	  success(encryptedString);
+      console.log(encryptedString);
+	  callback(encryptedString);
     });
-  };
-
-Transaction.prototype.run = function(){
-	
-	var endpoint = this.prototype._api_endpoint;
-	var api_key = this.prototype._api_key;
-	var encryption_key = this.prototype._encryption_key;
-	var setup = this._setup;
-	
-	if (this.validateSetup(setup)){
-		this.generateCardHash(setup.card,function(cardHash){
-			
-			var post = new Request(endpoint,'transactions/','POST',{
-				api_key: api_key,
-				encryption_key: encryption_key,
-				amount: setup.amount,
-				payment_method: 'credit_card',
-				card_hash: cardHash,
-				installments: 1
-			});
-			
-			post.run(function(data){
-				console.log(data);
-			});
-			
-		});
-	}
-	
 };
 
-module.exports = Transaction;
+Transaction.prototype.calculateInstallments = function(callback){
+  req = new Model.Request(this.getFullPath() + this.url() + '/calculate_installments_amount','GET');
+  req.parameters = Merge(true,this._attributes,params);
+  req.run(function(data){
+      callback(data);
+  });
+};
+
+Transaction.prototype.charge = function(callback){
+  
+  var me=this;
+  
+  this.checkCardObject();
+  this.clearCardData(function(hash){
+    //console.log(hash);
+    //Model.create.call(this,callback);
+    me.create(callback);  
+  });
+  
+};
+
+Transaction.prototype.capture = function(params, callback){
+  req = new Request(this.getFullPath() + this.url() + '/capture','POST');
+  req.parameters = Merge(true,this._attributes,params);
+  req.run(function(data){
+      callback(data);
+  });
+};
+
+Transaction.prototype.refund = function(params, callback){
+  req = new Request(this.getFullPath() + this.url() + '/refund','POST');
+  req.parameters = Merge(true,this._attributes,params);
+  req.run(function(data){
+      callback(data);
+  });
+};
+
+
+module.exports=Transaction;
