@@ -18,15 +18,9 @@ TransactionCommon.prototype = Model.prototype;
 TransactionCommon.prototype.constructor = TransactionCommon;
 TransactionCommon.prototype.parent = Model.prototype;
 
-//inherit from Model
-//var inherit = Object.create(Model.prototype);
-//inherit.constructor = TransactionCommon;
-//TransactionCommon.prototype = inherit;
-
 TransactionCommon.prototype.clearCardData = function(callback){
   if (this._attributes.card_hash == undefined){
     this.getCardHash({card_number:this._attributes.card_number,card_holder_name: this._attributes.card_holder_name, card_expiration_date: this._attributes.card_expiration_date,card_cvv: this._attributes.card_cvv},function(hash){
-      //this._attributes.card_hash = hash;
       callback(hash);
     });
   }
@@ -93,9 +87,7 @@ TransactionCommon.prototype.checkCardObject = function(){
       this._attributes.card_expiration_date = this._attributes.card._attributes.card_expiration_month + this._attributes.card._attributes.card_expiration_year;
       this._attributes.card_cvv = this._attributes.card._attributes.card_cvv;
     }
-    //console.log(this._attributes);
     delete this._attributes['card'];
-    //console.log(this._attributes);
   }
   else{
     if(this._attributes.hasOwnProperty('card_expiration_month') && this._attributes.hasOwnProperty('card_expiration_year'))
