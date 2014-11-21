@@ -1,18 +1,11 @@
 var Request = require('./request.js');
+var Merge = require('merge');
 var PagarMe = require('../pagarme.js');
 
 function Model(name,attr){
 	this._name = name;
 	this._attributes = attr;
 }
-
-Model.prototype.urlId = function(){
-	if (!this.hasOwnProperty('id')){
-	   console.log('Invalid ID')
-	   return '';
-	}
-	return this.url() + '/' + this.id;
-};
 
 Model.prototype.url = function(){
 	return PagarMe.getFullPath() + '/' + this._name + 's';
@@ -42,6 +35,7 @@ Model.prototype.findById = function(id,callback){
 };
 
 Model.prototype.findBy = function(hash, callback, page, count){
+	
 	page = page || 1;
 	count = count || 10;
 	
@@ -62,6 +56,10 @@ Model.prototype.all = function(callback, page, count){
 		callback(data);
 	});
 	
+};
+
+Model.prototype.test = function(callback){
+  callback('teste');
 };
 
 

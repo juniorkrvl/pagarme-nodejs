@@ -1,0 +1,52 @@
+var PagarMe = require('../libs/pagarme.js');
+var Merge = require('merge');
+
+exports.testTransaction = function(params){
+  return PagarMe.transaction(Merge(true,{
+   card_number:'4901720080344448',
+   card_holder_name:'Jose da Silva',
+   card_expiration_month: '10',
+   card_expiration_year: '15',
+   card_cvv: '314',
+   amount : 1000
+  },params));
+};
+
+exports.testCard = function(params){
+  return PagarMe.card(Merge(true,{
+    card_number:'4111111111111111',
+    card_holder_name: 'Jose da Silva',
+    card_expiration_month:'10',
+    card_expiration_year:'15',
+    card_cvv: '314'
+  }));
+};
+
+exports.testTransactionWithCustomer = function(params){
+ return PagarMe.transaction(Merge(true,{
+   amount:1000,
+   card_number: '4901720080344448',
+   card_holder_name: 'Jose da Silva',
+   card_expiration_month: 11,
+   card_expiration_year: '14',
+   card_cvv: 356,
+   customer: {
+     name:'Jose da Silva',
+     document_number: '36433809847',
+     email: 'interpryse@gmail.com',
+     address: {
+       street: 'Av. Brigadeiro Faria Lima',
+       neighborhood: 'Itaim bib',
+       zipcode: '01452000',
+       street_number: 2941
+     },
+     phone: {
+       ddd:12, 
+       number: '981433533'
+     },
+     sex:'M',
+     born_at: '1970-10-11',
+   },
+ },params));
+};
+

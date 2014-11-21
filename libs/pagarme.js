@@ -1,4 +1,5 @@
 var Transaction = require('./pagarme/transaction.js');
+var Card = require('./pagarme/card.js');
 var Model = require('./pagarme/model.js');
 
 var _api_key = null;
@@ -10,9 +11,13 @@ exports.setApiKeys = function(api_key, encryption_key){
 	_encryption_key = encryption_key;
 };
 
-exports.transaction = function(setup){return new Transaction(setup);};
+exports.transaction = function(setup){
+	return new Transaction(setup);
+};
 
-exports.card = function(setup){return new Model('card',setup);};
+exports.card = function(setup){
+	return new Card(setup);
+};
 
 exports.plan = function(setup){return new Model('plan',setup);};
 
