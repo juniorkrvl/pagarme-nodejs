@@ -35,9 +35,8 @@ Request.prototype.run = function(callback){
         callback(JSON.parse(body));
       else{
         throw new Error('Error: ' + body);
-        //callback(JSON.parse(body));
       }
-         //callback(JSON.stringify(body));
+
 	});
 
 };
