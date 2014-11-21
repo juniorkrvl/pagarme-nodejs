@@ -4,7 +4,7 @@
   "description": "Node API pagar.me",
   "main": "server.js",
   "scripts": {
-    "test": "test",
+    "test": "jasmine-node spec --captureExceptions",
     "start": "node server.js"
   },
   "repository": {
