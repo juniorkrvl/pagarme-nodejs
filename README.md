@@ -25,7 +25,7 @@ Http.createServer(function (req, res) {
   
    res.writeHead(200, {'Content-Type': 'application/json'});
 
-   //charge the transaction and get the result of api
+   //charge the transaction and get the result of the Pagar.me API
    transaction.charge(function(result){
       res.end(JSON.stringify(result));
    });
