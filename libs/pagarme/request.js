@@ -21,18 +21,28 @@ Request.prototype.run = function(callback){
 	}
 
 	this.headers = {};
-	this.parameters = Merge(true,{api_key: PagarMe.getApiKey()}, this.parameters); 
-	
-	options = {
-		url: this.path,
+    this.parameters = Merge(true,{api_key: PagarMe.getApiKey()}, this.parameters); 
+  
+    var getParams = ''
+    
+    if(this.method == 'GET'){
+      getParams = '?' + qs.stringify(this.parameters);
+      this.parameters = {};
+    }
+  
+    console.log(getParams);
+
+    options = {
+		url: this.path + getParams,
 		method: this.method,
 		headers: this.headers,
         form: this.parameters
 	};
   
     req(options,function(error, res, body){
-      if(!error && res.statusCode == 200)
+      if(!error && res.statusCode == 200){
         callback(JSON.parse(body));
+      }
       else{
         throw new Error('Error: ' + body);
       }

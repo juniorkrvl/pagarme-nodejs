@@ -10,9 +10,14 @@ http.createServer(function (req, res) {
   
   res.writeHead(200, {'Content-Type': 'application/json'});
   
-  var transaction = Helper.testTransaction();
+  var transaction = Helper.testTransactionWithCustomer();
   transaction.charge(function(result){
-    res.end(JSON.stringify(result));
+    transaction.findBy({customer: {document_number:36433809847}},function(result){
+      res.end(JSON.stringify(result));
+      for(var i=0; i<result.length;i++){
+        console.log(result[i].customer.document_number);
+      }
+    },1,3);
   });
   
 
