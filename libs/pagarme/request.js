@@ -30,8 +30,6 @@ Request.prototype.run = function(callback){
       this.parameters = {};
     }
   
-    console.log(getParams);
-
     options = {
 		url: this.path + getParams,
 		method: this.method,
@@ -44,6 +42,7 @@ Request.prototype.run = function(callback){
         callback(JSON.parse(body));
       }
       else{
+        console.log(body);
         throw new Error('Error: ' + body);
       }
 
