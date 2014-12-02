@@ -10,16 +10,14 @@ http.createServer(function (req, res) {
   
   res.writeHead(200, {'Content-Type': 'application/json'});
   
-  var transaction = Helper.testTransaction();
-
-  transaction.charge(function(result){
-    
-    transaction._attributes.id = result.id;
-    transaction.refund(function(res){
-      res.end(JSON.stringify(res));
-    });
-    
-  });
+	var plan = Helper.testPlan();
+	plan.create(function(plan_result){
+		var subscription = Helper.testSubscription();
+		subscription.plan = plan_result;
+		subscription.create(function(result){
+			res.end(JSON.stringify(result));
+		});
+	});
 
 }).listen(1337, '127.0.0.1');
 

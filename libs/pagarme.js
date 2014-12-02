@@ -29,6 +29,8 @@ exports.address = function(setup){return new Model('address', setup);};
 
 exports.phone = function(setup){return new Model('phone', setup);};
 
+exports.card = function(setup){return new Model('card', setup);};
+
 exports.bankAccount = function(setup){return new Model('bank_account', setup);};
 
 exports.getApiKey = function(){return _api_key;};

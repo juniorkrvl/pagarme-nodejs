@@ -27,9 +27,9 @@ exports.testTransactionWithCustomer = function(params){
    amount:1000,
    card_number: '4901720080344448',
    card_holder_name: 'Jose da Silva',
-   card_expiration_month: 11,
-   card_expiration_year: '14',
-   card_cvv: 356,
+   card_expiration_month: '10',
+   card_expiration_year: '15',
+   card_cvv: '314',
    customer: {
      name:'Jose da Silva',
      document_number: '36433809847',
@@ -48,5 +48,41 @@ exports.testTransactionWithCustomer = function(params){
      born_at: '1970-10-11',
    },
  },params));
+};
+
+exports.testBankAccount = function(params){
+	return PagarMe.bankAccount(Merge(true,{
+		bank_code:'237',
+		agencia: '1935',
+		agencia_dv: '9',
+		conta: '23398',
+		conta_dv: '9',
+		legal_name: 'foo bar loem',
+		document_number: '111.111.111-11'
+	},params));
+};
+
+exports.testPlan = function(params){
+	return PagarMe.plan(Merge(true,{
+		name:'Plano gold',
+		trial_days:5,
+		days: 30,
+		amount: 3000
+	},params));
+};
+
+exports.testSubscription = function(params){
+	return PagarMe.subscription(Merge(true,{
+		payment_method:'credit_card',
+		card_number: '4901720080344448',
+		card_holder_name: 'Jose da Silva',
+		card_expiration_month: '10',
+		card_expiration_year: '15',
+		card_cvv: '314',
+		postback_url: 'http://test.com/postback',
+		customer: {
+			email: 'customer@pagar.me'
+		}
+	},params));
 };
 

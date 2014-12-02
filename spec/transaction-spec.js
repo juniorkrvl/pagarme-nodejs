@@ -68,20 +68,6 @@ describe('Transaction',function(){
   });
   
 
-  it('should be able to find by anything',function(done){
-    var transaction = Helper.testTransactionWithCustomer();
-    transaction.charge(function(result){
-      transaction.findBy({customer: {document_number:36433809847}},function(res){
-        expect(res.length).toEqual(3);
-        for(var i=0; i<result.length;i++){
-          expect(res[i].customer.document_number).toEqual(36433809847);
-        }
-        done();
-      },1,3);
-    });
-  
-  });
-  
   it('should be able to create transaction with boleto', function(done){
     
     var transaction = PagarMe.transaction({
@@ -97,7 +83,7 @@ describe('Transaction',function(){
     });
 
   });
-  
+	
   it('should be able to send metadata', function(done){
     var transaction = Helper.testTransaction();
     transaction._attributes.metadata = {event: {name:'Pagarme Event',id:335}};
@@ -122,6 +108,21 @@ describe('Transaction',function(){
       });
     });
   });
+	
+  it('should be able to find by anything',function(done){
+    var transaction = Helper.testTransactionWithCustomer();
+    transaction.charge(function(result){
+      transaction.findBy({customer: {document_number:36433809847}},function(res){
+        expect(res.length).toEqual(3);
+        for(var i=0; i<result.length;i++){
+          expect(res[i].customer.document_number).toEqual(36433809847);
+        }
+        done();
+      },1,3);
+    });
+  
+  });
+	
   
 //  it('should be able to refund', function(done){
 //    var transaction = Helper.testTransaction();

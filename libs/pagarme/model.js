@@ -23,6 +23,7 @@ Model.prototype.save = function(callback){
 	req = new Request(this.url(),'PUT');
 	req.parameters = this._attributes;
 	req.run(function(data){
+		console.log(data);
 		callback(data);
 	});
 };
