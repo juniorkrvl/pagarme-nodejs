@@ -123,13 +123,4 @@ describe('Transaction',function(){
   
   });
 	
-  
-//  it('should be able to refund', function(done){
-//    var transaction = Helper.testTransaction();
-//    transaction.charge(function(result){
-//      
-//    });
-//  });
-  
-
 });
